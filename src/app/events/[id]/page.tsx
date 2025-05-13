@@ -4,15 +4,16 @@ import { Event } from "@/types/event";
 import Link from "next/link";
 import Image from "next/image";
 
-type Props = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+interface PageProps {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function EventDetails({ params }: Props) {
+export default async function EventDetails({ params }: PageProps) {
+  const resolvedParams = await params;
   const baseUrl = process.env.NEXT_PUBLIC_XANO_API_URL;
   try {
-    const res = await fetch(`${baseUrl}/events/${params.id}`);
+    const res = await fetch(`${baseUrl}/events/${resolvedParams.id}`);
     if (!res.ok) {
       throw new Error(`Failed to fetch event: ${res.status}`);
     }

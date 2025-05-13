@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,7 +13,7 @@ export default function Home() {
   const [category, setCategory] = useState("all");
   const [date, setDate] = useState("");
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     const baseUrl = process.env.NEXT_PUBLIC_XANO_API_URL;
     const url = (category !== "all" || date)
       ? `${baseUrl}/events/filter?category=${category !== "all" ? category : ""}&date=${date}`
@@ -21,11 +21,11 @@ export default function Home() {
     const res = await fetch(url);
     const data = await res.json();
     setEvents(Array.isArray(data) ? data : [data]);
-  };
+  }, [category, date]);
 
   useEffect(() => {
     fetchEvents();
-  }, [category, date]);
+  }, [fetchEvents]);
 
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
