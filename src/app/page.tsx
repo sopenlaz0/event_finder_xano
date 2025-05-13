@@ -32,8 +32,8 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">ផ្នែកព្រឹត្តិការណ៍ភ្នំពេញ | Phnom Penh Events</h1>
+    <div className="container mx-auto p-4 min-h-screen bg-background">
+      <h1 className="text-2xl font-bold mb-4 text-foreground">ផ្នែកព្រឹត្តិការណ៍ភ្នំពេញ | Phnom Penh Events</h1>
       <form onSubmit={handleFilter} className="mb-6 flex flex-col sm:flex-row gap-4">
         <Select value={category} onValueChange={setCategory}>
           <SelectTrigger className="w-full sm:w-48">
@@ -57,27 +57,27 @@ export default function Home() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {events.map((event) => (
           <Link href={`/events/${event.id}`} key={event.id} className="block">
-            <Card className="hover:shadow-lg transition-shadow h-full">
+            <Card className="hover:shadow-lg transition-shadow h-full bg-card">
               <CardHeader>
                 {event.imageUrl ? (
                   <img src={event.imageUrl} alt={event.name} className="w-full h-48 object-cover rounded-t-md" />
                 ) : (
-                  <div className="w-full h-48 bg-gray-200 rounded-t-md flex items-center justify-center">
-                    <span className="text-gray-500">No image available</span>
+                  <div className="w-full h-48 bg-muted rounded-t-md flex items-center justify-center">
+                    <span className="text-muted-foreground">No image available</span>
                   </div>
                 )}
               </CardHeader>
               <CardContent>
-                <CardTitle className="text-lg font-semibold">
+                <CardTitle className="text-lg font-semibold text-card-foreground">
                   {event.name}
                 </CardTitle>
-                <p className="text-sm text-gray-600">{new Date(event.utcStartDate).toLocaleString()}</p>
-                <p className="text-sm text-gray-600">{[
+                <p className="text-sm text-muted-foreground">{new Date(event.utcStartDate).toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">{[
                   event.location_name,
                   event.location_city
                 ].filter(Boolean).join(', ') || 'Location not specified'}</p>
-                <p className="text-sm text-gray-600">Organized by: {event.organizedBy || 'Not specified'}</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">Organized by: {event.organizedBy || 'Not specified'}</p>
+                <p className="text-sm text-muted-foreground">
                   {event.usersGoing} Going, {event.usersInterested} Interested
                 </p>
               </CardContent>

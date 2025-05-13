@@ -22,19 +22,19 @@ export default async function EventDetails({ params }: EventDetailsProps) {
     }
 
     return (
-      <div className="container mx-auto p-4">
-        <Card>
+      <div className="container mx-auto p-4 min-h-screen bg-background">
+        <Card className="bg-card">
           <CardHeader>
             {event.imageUrl ? (
               <img src={event.imageUrl} alt={event.name} className="w-full max-w-md h-auto rounded-md mx-auto" />
             ) : (
-              <div className="w-full max-w-md h-48 bg-gray-200 rounded-md mx-auto flex items-center justify-center">
-                <span className="text-gray-500">No image available</span>
+              <div className="w-full max-w-md h-48 bg-muted rounded-md mx-auto flex items-center justify-center">
+                <span className="text-muted-foreground">No image available</span>
               </div>
             )}
-            <CardTitle className="text-2xl font-bold">{event.name}</CardTitle>
+            <CardTitle className="text-2xl font-bold text-card-foreground">{event.name}</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-card-foreground">
             <p><strong>Date:</strong> {new Date(event.utcStartDate).toLocaleString()}</p>
             {event.duration && <p><strong>Duration:</strong> {event.duration}</p>}
             <p><strong>Location:</strong> {[
@@ -45,13 +45,13 @@ export default async function EventDetails({ params }: EventDetailsProps) {
             <p><strong>Organized By:</strong> {event.organizedBy || 'Not specified'}</p>
             <p><strong>Attendance:</strong> {event.usersGoing} Going, {event.usersInterested} Interested</p>
             {event.url && (
-              <Button asChild variant="link">
+              <Button asChild variant="link" className="text-primary">
                 <a href={event.url} target="_blank" rel="noopener noreferrer">
                   View on Facebook
                 </a>
               </Button>
             )}
-            <Button asChild variant="link" className="ml-4">
+            <Button asChild variant="link" className="ml-4 text-primary">
               <Link href="/">Back to Events</Link>
             </Button>
           </CardContent>
