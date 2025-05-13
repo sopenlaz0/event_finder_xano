@@ -1,0 +1,76 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Event } from "@/types/event";
+import Link from "next/link";
+
+interface EventDetailsProps {
+  params: { id: string };
+}
+
+export default async function EventDetails({ params }: EventDetailsProps) {
+  const baseUrl = process.env.NEXT_PUBLIC_XANO_API_URL;
+  try {
+    const res = await fetch(`${baseUrl}/events/${params.id}`);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch event: ${res.status}`);
+    }
+    const event: Event = await res.json();
+    console.log('Event data:', event); // Debug log
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardHeader>
+            {event.imageUrl ? (
+              <img src={event.imageUrl} alt={event.name} className="w-full max-w-md h-auto rounded-md mx-auto" />
+            ) : (
+              <div className="w-full max-w-md h-48 bg-gray-200 rounded-md mx-auto flex items-center justify-center">
+                <span className="text-gray-500">No image available</span>
+              </div>
+            )}
+            <CardTitle className="text-2xl font-bold">{event.name}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p><strong>Date:</strong> {new Date(event.utcStartDate).toLocaleString()}</p>
+            {event.duration && <p><strong>Duration:</strong> {event.duration}</p>}
+            <p><strong>Location:</strong> {[
+              event.location_name,
+              event.location_city,
+              event.location_countryCode
+            ].filter(Boolean).join(', ') || 'Not specified'}</p>
+            <p><strong>Organized By:</strong> {event.organizedBy || 'Not specified'}</p>
+            <p><strong>Attendance:</strong> {event.usersGoing} Going, {event.usersInterested} Interested</p>
+            {event.url && (
+              <Button asChild variant="link">
+                <a href={event.url} target="_blank" rel="noopener noreferrer">
+                  View on Facebook
+                </a>
+              </Button>
+            )}
+            <Button asChild variant="link" className="ml-4">
+              <Link href="/">Back to Events</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  } catch (error) {
+    console.error('Error fetching event:', error);
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent>
+            <p className="text-red-500">Error loading event details. Please try again later.</p>
+            <Button asChild variant="link" className="mt-4">
+              <Link href="/">Back to Events</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+}
