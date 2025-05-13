@@ -2,15 +2,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Event } from "@/types/event";
 import Link from "next/link";
+import Image from "next/image";
 
-interface EventDetailsProps {
-  params: { id: string };
+interface PageProps {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function EventDetails({ params }: EventDetailsProps) {
+export default async function EventDetails({ params }: PageProps) {
+  const resolvedParams = await params;
   const baseUrl = process.env.NEXT_PUBLIC_XANO_API_URL;
   try {
-    const res = await fetch(`${baseUrl}/events/${params.id}`);
+    const res = await fetch(`${baseUrl}/events/${resolvedParams.id}`);
     if (!res.ok) {
       throw new Error(`Failed to fetch event: ${res.status}`);
     }
@@ -26,7 +29,14 @@ export default async function EventDetails({ params }: EventDetailsProps) {
         <Card className="bg-card">
           <CardHeader>
             {event.imageUrl ? (
-              <img src={event.imageUrl} alt={event.name} className="w-full max-w-md h-auto rounded-md mx-auto" />
+              <div className="relative w-full max-w-md h-48 mx-auto">
+                <Image
+                  src={event.imageUrl}
+                  alt={event.name}
+                  fill
+                  className="object-cover rounded-md"
+                />
+              </div>
             ) : (
               <div className="w-full max-w-md h-48 bg-muted rounded-md mx-auto flex items-center justify-center">
                 <span className="text-muted-foreground">No image available</span>

@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import Image from "next/image";
 import { Event } from "@/types/event";
 
 export default function Home() {
@@ -12,11 +13,7 @@ export default function Home() {
   const [category, setCategory] = useState("all");
   const [date, setDate] = useState("");
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     const baseUrl = process.env.NEXT_PUBLIC_XANO_API_URL;
     const url = (category !== "all" || date)
       ? `${baseUrl}/events/filter?category=${category !== "all" ? category : ""}&date=${date}`
@@ -24,7 +21,11 @@ export default function Home() {
     const res = await fetch(url);
     const data = await res.json();
     setEvents(Array.isArray(data) ? data : [data]);
-  };
+  }, [category, date]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +61,14 @@ export default function Home() {
             <Card className="hover:shadow-lg transition-shadow h-full bg-card">
               <CardHeader>
                 {event.imageUrl ? (
-                  <img src={event.imageUrl} alt={event.name} className="w-full h-48 object-cover rounded-t-md" />
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={event.imageUrl}
+                      alt={event.name}
+                      fill
+                      className="object-cover rounded-t-md"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-48 bg-muted rounded-t-md flex items-center justify-center">
                     <span className="text-muted-foreground">No image available</span>
