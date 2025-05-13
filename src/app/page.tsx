@@ -5,16 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import Image from "next/image";
 import { Event } from "@/types/event";
 
 export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const [category, setCategory] = useState("all");
   const [date, setDate] = useState("");
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
 
   const fetchEvents = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_XANO_API_URL;
@@ -25,6 +22,10 @@ export default function Home() {
     const data = await res.json();
     setEvents(Array.isArray(data) ? data : [data]);
   };
+
+  useEffect(() => {
+    fetchEvents();
+  }, [category, date]);
 
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +61,14 @@ export default function Home() {
             <Card className="hover:shadow-lg transition-shadow h-full bg-card">
               <CardHeader>
                 {event.imageUrl ? (
-                  <img src={event.imageUrl} alt={event.name} className="w-full h-48 object-cover rounded-t-md" />
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={event.imageUrl}
+                      alt={event.name}
+                      fill
+                      className="object-cover rounded-t-md"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-48 bg-muted rounded-t-md flex items-center justify-center">
                     <span className="text-muted-foreground">No image available</span>
